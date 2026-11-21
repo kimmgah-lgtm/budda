@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한국 불교 문화유산 연대기 탐험</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-hanji: #F7F3EA;
+      --card-bg: #FFFDF8;
+      --primary: #1F5B5B;      /* 청록 */
+      --accent: #A94438;       /* 적갈색(단청) */
+      --gold: #C28E42;         /* 황토/금색 */
+      --ink: #2C2A29;          /* 먹색 */
+      --muted: #6B655E;
+      --border: #E2D9C8;
+      --shadow: 0 4px 14px rgba(44, 42, 41, 0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-hanji);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* 헤더 */
+    header {
+      background: linear-gradient(135deg, #174646 0%, var(--primary) 100%);
+      color: #FFFDF8;
+      padding: 2.2rem 1.5rem 1.8rem;
+      text-align: center;
+      border-bottom: 4px solid var(--gold);
+    }
+
+    header h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.9rem;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-bottom: 1.2rem;
+    }
+
+    /* 스탬프 진행률 바 */
+    .progress-box {
+      max-width: 540px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.14);
+      padding: 0.85rem 1.1rem;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      gap: 0.5rem;
+    }
+
+    .progress-right {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .btn-reset-stamp {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFDF8;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.76rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-reset-stamp:hover {
+      background: rgba(169, 68, 56, 0.85);
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #E8B86D;
+      border-radius: 99px;
+      transition: width 0.35s ease;
+    }
+
+    /* 메인 컨테이너 */
+    main {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 1.5rem 1.2rem 4rem;
+    }
+
+    /* 상단 탭 (연대기 / 퀴즈) */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.7rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-tab {
+      padding: 0.65rem 1.4rem;
+      border: 1.5px solid var(--primary);
+      background: var(--card-bg);
+      color: var(--primary);
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-tab.active {
+      background: var(--primary);
+      color: #FFFDF8;
+    }
+
+    /* 필터 및 검색 영역 */
+    .filter-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.15rem 1.3rem;
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.95rem;
+      padding-bottom: 0.95rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.65rem 2.4rem 0.65rem 0.95rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #FAF6EE;
+      font-size: 0.92rem;
+      font-family: inherit;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      background: #FFFDF8;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.15rem;
+      cursor: pointer;
+      display: none;
+      padding: 0 4px;
+    }
+
+    .search-clear.visible { display: block; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-row + .filter-row {
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      min-width: 58px;
+    }
+
+    .chip {
+      padding: 0.38rem 0.9rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: #FAF6EE;
+      color: var(--ink);
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .chip:hover { border-color: var(--primary); }
+
+    .chip.active-era {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .chip.active-cat {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* 연대기 리스트 */
+    .timeline {
+      position: relative;
+      padding-left: 26px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.1rem;
+    }
+
+    .era-section {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .era-heading {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .era-heading::before {
+      content: '';
+      position: absolute;
+      left: -23px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--bg-hanji);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.15rem;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(31, 91, 91, 0.12);
+    }
+
+    .card-badges {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .badge-era { background: #E6F0F0; color: var(--primary); }
+    .badge-cat { background: #F8EAE8; color: var(--accent); }
+    .badge-year { background: #F3ECE0; color: var(--muted); font-weight: 500; }
+
+    .card h3 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.12rem;
+      margin-bottom: 0.45rem;
+      color: var(--ink);
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-weight: 600;
+      border-top: 1px solid #F0E9DC;
+      padding-top: 0.6rem;
+    }
+
+    /* 완료 스탬프 */
+    .stamp-mark {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Noto Serif KR', serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      transform: rotate(-8deg);
+      background: rgba(255, 253, 248, 0.92);
+      display: none;
+    }
+
+    .card.stamped .stamp-mark { display: block; }
+    .card.stamped { border-color: #D8B4A0; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px dashed var(--border);
+    }
+
+    /* 모달 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 22, 20, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card-bg);
+      max-width: 520px;
+      width: 100%;
+      border-radius: 16px;
+      padding: 1.6rem;
+      border: 2px solid var(--border);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+      position: relative;
+      animation: pop 0.2s ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .modal h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.45rem;
+      margin: 0.6rem 0 0.3rem;
+    }
+
+    .modal-meta {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .modal-desc {
+      font-size: 0.96rem;
+      line-height: 1.75;
+      margin-bottom: 1.1rem;
+      background: #FAF6EE;
+      padding: 1rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .keyword {
+      font-size: 0.8rem;
+      background: #EFE9DC;
+      color: var(--ink);
+      padding: 0.25rem 0.65rem;
+      border-radius: 99px;
+    }
+
+    .btn-stamp {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-stamp:hover { background: #8E362B; }
+    .btn-stamp.done { background: var(--primary); }
+
+    /* 퀴즈 영역 */
+    .quiz-box {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+    }
+
+    .quiz-status {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .quiz-question {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.3rem;
+      line-height: 1.5;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .quiz-opt {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      background: #FAF6EE;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: #EFF5F5; }
+    .quiz-opt.correct { background: #E3F3EA; border-color: #2E7D52; color: #1E5638; font-weight: 700; }
+    .quiz-opt.wrong { background: #FCEAEA; border-color: var(--accent); color: var(--accent); }
+
+    .quiz-feedback {
+      margin-top: 1rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      min-height: 1.4rem;
+    }
+
+    .btn-next {
+      margin-top: 1rem;
+      padding: 0.7rem 1.4rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>한국 불교 문화유산 연대기 탐험</h1>
+    <p>시대별 사찰 · 고찰 · 탑 · 승려 · 불상 · 불화를 한눈에 살펴보고 탐험 도장을 모아보세요.</p>
+    <div class="progress-box">
+      <div class="progress-top">
+        <span>나의 탐험 스탬프</span>
+        <div class="progress-right">
+          <span id="progressText">0 / 20 완료</span>
+          <button class="btn-reset-stamp" id="btnResetStamp" title="모든 탐험 스탬프 초기화">초기화</button>
+        </div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 상단 탭 -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="timeline">연대기 탐험</button>
+      <button class="nav-tab" data-tab="quiz">연계 퀴즈 풀기</button>
+    </div>
+
+    <!-- 연대기 탭 -->
+    <section id="tab-timeline">
+      <div class="filter-panel">
+        <!-- 검색창 -->
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="제목, 지역, 키워드 검색 (예: 불국사, 원효, 배흘림기둥, 경주)"
+              autocomplete="off"
+            />
+            <button type="button" id="searchClear" class="search-clear" aria-label="검색어 지우기">&times;</button>
+          </div>
+        </div>
+
+        <div class="filter-row" id="eraFilters">
+          <span class="filter-label">시대별</span>
+          <button class="chip active-era" data-era="전체">전체</button>
+          <button class="chip" data-era="삼국시대">삼국시대</button>
+          <button class="chip" data-era="통일신라">통일신라</button>
+          <button class="chip" data-era="고려시대">고려시대</button>
+          <button class="chip" data-era="조선시대">조선시대</button>
+        </div>
+        <div class="filter-row" id="catFilters">
+          <span class="filter-label">주제별</span>
+          <button class="chip active-cat" data-cat="전체">전체</button>
+          <button class="chip" data-cat="사찰">사찰</button>
+          <button class="chip" data-cat="고찰">고찰</button>
+          <button class="chip" data-cat="탑">탑</button>
+          <button class="chip" data-cat="승려">승려</button>
+          <button class="chip" data-cat="불상">불상</button>
+          <button class="chip" data-cat="불화">불화</button>
+        </div>
+      </div>
+
+      <div id="timelineContainer"></div>
+    </section>
+
+    <!-- 퀴즈 탭 -->
+    <section id="tab-quiz" class="hidden">
+      <div class="quiz-box" id="quizBox">
+        <div class="quiz-status">
+          <span id="quizCounter">문제 1 / 5</span>
+          <span id="quizScore">점수: 0</span>
+        </div>
+        <div class="quiz-question" id="quizQuestion"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <button class="btn-next" id="btnNextQuiz">다음 문제</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 상세 모달 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <div class="card-badges" id="modalBadges"></div>
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="keywords" id="modalKeywords"></div>
+      <button class="btn-stamp" id="btnStamp">탐험 완료 도장 찍기</button>
+    </div>
+  </div>
+
+  <script>
+    const DATA = [
+      // ==================== 삼국시대 (5) ====================
+      {
+        id: "jeondeungsa",
+        era: "삼국시대",
+        category: "고찰",
+        year: "381년 창건 (고구려 소수림왕)",
+        title: "강화 전등사",
+        location: "인천 강화군",
+        summary: "우리나라에 현존하는 사찰 중 가장 오랜 역사를 지닌 대표 고찰입니다.",
+        detail: "고구려 소수림왕 때 아도화상이 창건했다고 전해지며, 고려 시대 정화궁주가 옥등을 시주한 뒤 '전등사'라 불리게 되었습니다. 대웅전 처마 네 모서리의 나부상 전설로도 유명합니다.",
+        keywords: ["현존 최고 사찰", "삼랑성", "대웅전 나부상"]
+      },
+      {
+        id: "hwangnyongsa",
+        era: "삼국시대",
+        category: "사찰",
+        year: "553년 창건 (신라 진흥왕)",
+        title: "경주 황룡사",
+        location: "경북 경주시",
+        summary: "신라 최대 규모의 호국 사찰로, 거대한 구층목탑이 세워졌던 곳입니다.",
+        detail: "진흥왕 때 궁궐을 짓다가 황룡이 나타나 사찰로 바꾸어 지었습니다. 선덕여왕 때 완성된 황룡사 구층목탑은 높이 약 80m에 달했으나 몽골 침입 때 불타 현재는 터만 남아 있습니다.",
+        keywords: ["호국 사찰", "구층목탑", "신라 진흥왕"]
+      },
+      {
+        id: "wongwang",
+        era: "삼국시대",
+        category: "승려",
+        year: "542 ~ 640",
+        title: "원광법사",
+        location: "신라 경주 · 청도 운문사",
+        summary: "화랑들의 행동 강령인 '세속오계'를 지어준 신라의 고승입니다.",
+        detail: "중국 수나라에 유학하고 돌아와 신라 불교의 기틀을 다졌습니다. 젊은 화랑 귀산과 추항에게 충·효·신·용·살생유택을 담은 세속오계를 내려주어 신라 삼국 통일의 정신적 기반을 마련했습니다.",
+        keywords: ["세속오계", "화랑도", "호국 불교"]
+      },
+      {
+        id: "bangasayusang",
+        era: "삼국시대",
+        category: "불상",
+        year: "6세기 후반 ~ 7세기 초",
+        title: "금동미륵보살반가사유상",
+        location: "국립중앙박물관",
+        summary: "오른발을 왼쪽 무릎 위에 올리고 깊은 생각에 잠긴 불상입니다.",
+        detail: "손가락을 뺨에 살짝 대고 부드러운 미소를 짓고 있는 삼국시대 대표 금동불상입니다. 균형 잡힌 비례와 섬세한 옷 주름 표현이 뛰어나 세계적인 걸작으로 꼽힙니다.",
+        keywords: ["반가사유상", "삼국시대 걸작", "사유의 방"]
+      },
+      {
+        id: "mireuksa-pagoda",
+        era: "삼국시대",
+        category: "탑",
+        year: "7세기 초 (백제 무왕)",
+        title: "익산 미륵사지 석탑",
+        location: "전북 익산시",
+        summary: "우리나라에 남아 있는 가장 오래되고 규모가 큰 석탑입니다.",
+        detail: "백제 무왕 때 세워진 미륵사지 석탑은 나무로 탑을 만들던 목탑 양식을 돌로 그대로 구현한 것이 특징입니다. 한국 석탑의 시초로 평가받습니다.",
+        keywords: ["백제 무왕", "목탑 양식", "가장 오래된 석탑"]
+      },
+
+      // ==================== 통일신라 (5) ====================
+      {
+        id: "wonhyo",
+        era: "통일신라",
+        category: "승려",
+        year: "617 ~ 686",
+        title: "원효대사",
+        location: "신라 경주",
+        summary: "불교의 대중화와 종파 간 화합을 이끈 신라의 대표 승려입니다.",
+        detail: "당나라 유학길에 해골 물을 마시고 '모든 것은 마음먹기에 달렸다(일체유심조)'는 깨달음을 얻었습니다. 아미타 신앙을 통해 일반 백성도 쉽게 불교를 믿을 수 있게 했습니다.",
+        keywords: ["일체유심조", "불교 대중화", "화쟁 사상"]
+      },
+      {
+        id: "bulguksa",
+        era: "통일신라",
+        category: "사찰",
+        year: "751년 중창 (경덕왕)",
+        title: "경주 불국사",
+        location: "경북 경주시",
+        summary: "부처의 나라를 이 땅에 구현하고자 지은 통일신라의 대표 사찰입니다.",
+        detail: "김대성이 현세의 부모를 위해 지은 사찰로, 청운교·백운교 같은 석조 건축과 다보탑·석가탑이 완벽한 조화를 이루며 유네스코 세계유산으로 등재되어 있습니다.",
+        keywords: ["김대성", "유네스코 세계유산", "청운교·백운교"]
+      },
+      {
+        id: "dabotap",
+        era: "통일신라",
+        category: "탑",
+        year: "8세기 중엽",
+        title: "불국사 다보탑",
+        location: "경북 경주시 불국사",
+        summary: "화려하고 독창적인 구조로 10원 동전에도 새겨진 석탑입니다.",
+        detail: "단정한 석가탑과 마주 보고 서 있으며, 사각·팔각·원형 구조가 어우러진 화려한 조형미를 자랑합니다. 통일신라 석조 예술의 정점을 보여줍니다.",
+        keywords: ["10원 동전", "석가탑과 쌍탑", "화려한 조형미"]
+      },
+      {
+        id: "seokguram",
+        era: "통일신라",
+        category: "불상",
+        year: "8세기 중엽",
+        title: "석굴암 본존불",
+        location: "경북 경주시 토함산",
+        summary: "인공 석굴 안에 모셔진 동양 조각 예술의 걸작입니다.",
+        detail: "화강암을 깎아 만든 인공 석굴 중앙에 자리한 석가여래좌상입니다. 웅장하면서도 자비로운 표정과 완벽한 기하학적 비례가 돋보입니다.",
+        keywords: ["인공 석굴", "화강암 조각", "세계유산"]
+      },
+      {
+        id: "hwaeom-byeonsangdo",
+        era: "통일신라",
+        category: "불화",
+        year: "755년 (경덕왕 14년)",
+        title: "신라 백지묵서 화엄경 변상도",
+        location: "리움미술관 소장",
+        summary: "우리나라에 현존하는 가장 오래된 불화(경전 삽화)입니다.",
+        detail: "닥나무 종이에 금가루와 은가루로 정교하게 그려낸 화엄경의 앞표지 그림입니다. 통일신라 회화의 섬세한 필치와 불교 미술의 높은 수준을 엿볼 수 있습니다.",
+        keywords: ["현존 최고 불화", "금·은니 사경", "국보"]
+      },
+
+      // ==================== 고려시대 (5) ====================
+      {
+        id: "gwanchoksa-maitreya",
+        era: "고려시대",
+        category: "불상",
+        year: "10세기 후반 (고려 광종)",
+        title: "논산 관촉사 석조미륵보살입상",
+        location: "충남 논산시",
+        summary: "높이 18m가 넘는 고려 시대 특유의 거대 석불('은진미륵')입니다.",
+        detail: "통일신라의 균형 잡힌 불상과 달리 머리와 손이 크고 개성 있는 비례를 보여줍니다. 고려 초기 지방 호족 세력의 성장과 거불(巨佛) 유행을 대표하는 작품입니다.",
+        keywords: ["은진미륵", "거대 석불", "고려 초기 지방색"]
+      },
+      {
+        id: "woljeongsa-pagoda",
+        era: "고려시대",
+        category: "탑",
+        year: "10세기 말 ~ 11세기 초",
+        title: "평창 월정사 팔각 구층석탑",
+        location: "강원 평창군",
+        summary: "고려 시대 북방 지역에서 유행한 다각다층 석탑의 대표작입니다.",
+        detail: "신라의 사각 삼층석탑 양식에서 벗어나 팔각형 평면에 9층으로 높이 쌓아 올렸습니다. 탑 앞에 무릎을 꿇고 공양하는 석조보살좌상과 함께 어우러져 있습니다.",
+        keywords: ["팔각 구층", "다각다층 석탑", "공양보살상"]
+      },
+      {
+        id: "jinul",
+        era: "고려시대",
+        category: "승려",
+        year: "1158 ~ 1210",
+        title: "보조국사 지눌",
+        location: "전남 순천 송광사",
+        summary: "수선사 결사를 통해 고려 불교의 개혁을 이끈 승려입니다.",
+        detail: "타락한 불교계를 바로잡기 위해 정혜결사를 조직하고, 선종을 중심으로 교종을 포용하는 '돈오점수'와 '정혜쌍수'를 주장해 한국 조계종의 기틀을 마련했습니다.",
+        keywords: ["수선사 결사", "돈오점수", "정혜쌍수"]
+      },
+      {
+        id: "suwol-gwaneumdo",
+        era: "고려시대",
+        category: "불화",
+        year: "14세기 (고려 후기)",
+        title: "고려 수월관음도",
+        location: "국내외 주요 박물관",
+        summary: "투명한 베일과 화려한 금선 묘사가 돋보이는 고려 불화의 백미입니다.",
+        detail: "달빛이 비치는 물가 바위에 앉은 관음보살과 법을 구하는 선재동자를 비단 위에 그렸습니다. 섬세한 선과 우아한 색채로 동아시아 불화 중 최고 수준으로 평가받습니다.",
+        keywords: ["고려 불화", "투명한 베일", "선재동자"]
+      },
+      {
+        id: "buseoksa",
+        era: "고려시대",
+        category: "고찰",
+        year: "1376년 중수 (무량수전)",
+        title: "영주 부석사",
+        location: "경북 영주시",
+        summary: "배흘림기둥으로 유명한 무량수전이 있는 대표 산사 고찰입니다.",
+        detail: "신라 의상대사가 창건했으나, 현재 남아 있는 무량수전은 고려 후기 목조 건축의 아름다움을 대표합니다. 주심포 양식과 배흘림기둥이 안정감 있는 조형미를 보여줍니다.",
+        keywords: ["무량수전", "배흘림기둥", "주심포 양식"]
+      },
+
+      // ==================== 조선시대 (5) ====================
+      {
+        id: "wongaksa-pagoda",
+        era: "조선시대",
+        category: "탑",
+        year: "1467년 (조선 세조)",
+        title: "원각사지 십층석탑",
+        location: "서울 종로구 탑골공원",
+        summary: "대리석으로 정교하게 조각된 조선시대의 대표 석탑입니다.",
+        detail: "고려 경천사지 십층석탑의 영향을 받아 제작되었으며, 화강암이 아닌 대리석을 사용해 탑신 곳곳에 매우 섬세한 부처와 보살의 모습을 새겼습니다.",
+        keywords: ["조선 세조", "대리석 석탑", "탑골공원"]
+      },
+      {
+        id: "samyeong",
+        era: "조선시대",
+        category: "승려",
+        year: "1544 ~ 1610",
+        title: "사명대사 (유정)",
+        location: "밀양 · 금강산",
+        summary: "임진왜란 때 승병을 이끌고 나라를 지킨 호국 승려입니다.",
+        detail: "서산대사의 제자로 임진왜란 당시 승병을 조직해 큰 공을 세웠습니다. 전쟁 후에는 일본에 사신으로 건너가 조선인 포로 수천 명을 데려오는 외교적 업적도 남겼습니다.",
+        keywords: ["임진왜란", "호국 승병", "포로 송환"]
+      },
+      {
+        id: "hwaeomsa",
+        era: "조선시대",
+        category: "사찰",
+        year: "1702년 각황전 중건 (숙종)",
+        title: "구례 화엄사",
+        location: "전남 구례군 지리산",
+        summary: "임진왜란 이후 중건된 웅장한 각황전이 자리한 지리산 대표 사찰입니다.",
+        detail: "신라 시대에 창건되었으나 임진왜란 때 소실된 뒤 조선 후기에 크게 중건되었습니다. 현존 최대 규모의 목조 불전 중 하나인 각황전과 사사자 삼층석탑이 유명합니다.",
+        keywords: ["각황전", "지리산 사찰", "조선 후기 중건"]
+      },
+      {
+        id: "gwaebul",
+        era: "조선시대",
+        category: "불화",
+        year: "1653년 (조선 효종)",
+        title: "화엄사 영산회 괘불탱",
+        location: "전남 구례군 화엄사",
+        summary: "야외에서 큰 불교 의식을 열 때 내걸던 높이 12m의 초대형 불화입니다.",
+        detail: "조선 후기에 크게 유행한 '괘불' 중 대표적인 국보 작품입니다. 수많은 대중이 야외에서 함께 예배할 수 있도록 웅장한 규모와 강렬한 적색·녹색 채색으로 그려졌습니다.",
+        keywords: ["초대형 괘불", "야외 의식", "조선 후기 불화"]
+      },
+      {
+        id: "daeheungsa",
+        era: "조선시대",
+        category: "고찰",
+        year: "조선 후기 중흥",
+        title: "해남 대흥사",
+        location: "전남 해남군 두륜산",
+        summary: "서산대사의 의발이 전해지고 한국 차 문화가 꽃핀 남도의 고찰입니다.",
+        detail: "임진왜란 이후 서산대사의 유언에 따라 그의 가사와 발우가 보관되면서 조선 불교의 중심 도량으로 번성했습니다. 초의선사가 한국 다도(茶道)를 정립한 곳이자 유네스코 세계유산(산사)입니다.",
+        keywords: ["서산대사", "초의선사 차 문화", "유네스코 산사"]
+      }
+    ];
+
+    const ERA_ORDER = ["삼국시대", "통일신라", "고려시대", "조선시대"];
+    let selectedEra = "전체";
+    let selectedCat = "전체";
+    let searchQuery = "";
+    let currentModalId = null;
+
+    // 스탬프 상태 (로컬스토리지 저장)
+    let stampedIds = JSON.parse(localStorage.getItem("buddhism_stamps") || "[]");
+
+    function saveStamps() {
+      localStorage.setItem("buddhism_stamps", JSON.stringify(stampedIds));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = DATA.length;
+      const done = stampedIds.filter(id => DATA.some(d => d.id === id)).length;
+      document.getElementById("progressText").textContent = `${done} / ${total} 완료`;
+      document.getElementById("progressFill").style.width = `${Math.round((done / total) * 100)}%`;
+    }
+
+    // 스탬프 초기화
+    document.getElementById("btnResetStamp").addEventListener("click", () => {
+      if (stampedIds.length === 0) {
+        alert("아직 찍힌 탐험 스탬프가 없습니다.");
+        return;
+      }
+      if (confirm("모아둔 탐험 스탬프를 모두 초기화할까요?")) {
+        stampedIds = [];
+        saveStamps();
+        renderTimeline();
+      }
+    });
+
+    // 검색창 이벤트
+    const searchInput = document.getElementById("searchInput");
+    const searchClear = document.getElementById("searchClear");
+
+    searchInput.addEventListener("input", e => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      searchClear.classList.toggle("visible", searchQuery.length > 0);
+      renderTimeline();
+    });
+
+    searchClear.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      searchClear.classList.remove("visible");
+      searchInput.focus();
+      renderTimeline();
+    });
+
+    // 연대기 렌더링
+    function renderTimeline() {
+      const container = document.getElementById("timelineContainer");
+      const filtered = DATA.filter(item => {
+        const matchEra = selectedEra === "전체" || item.era === selectedEra;
+        const matchCat = selectedCat === "전체" || item.category === selectedCat;
+        const matchSearch = !searchQuery || [
+          item.title,
+          item.location,
+          item.summary,
+          item.detail,
+          ...item.keywords
+        ].some(text => text.toLowerCase().includes(searchQuery));
+        return matchEra && matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">검색어나 필터 조건에 해당하는 항목이 없습니다.<br>다른 키워드나 시대·주제를 선택해 보세요.</div>`;
+        return;
+      }
+
+      const erasToShow = ERA_ORDER.filter(era => filtered.some(item => item.era === era));
+
+      let html = `<div class="timeline">`;
+      erasToShow.forEach(era => {
+        const items = filtered.filter(i => i.era === era);
+        html += `
+          <div class="era-section">
+            <h2 class="era-heading">${era}</h2>
+            <div class="card-grid">
+              ${items.map(item => {
+                const isStamped = stampedIds.includes(item.id);
+                return `
+                  <article class="card ${isStamped ? 'stamped' : ''}" onclick="openModal('${item.id}')">
+                    <span class="stamp-mark">탐험완료</span>
+                    <div>
+                      <div class="card-badges">
+                        <span class="badge badge-cat">${item.category}</span>
+                        <span class="badge badge-year">${item.year}</span>
+                      </div>
+                      <h3>${item.title}</h3>
+                      <p>${item.summary}</p>
+                    </div>
+                    <div class="card-footer">
+                      <span>${item.location}</span>
+                      <span>자세히 보기 &rarr;</span>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    // 필터 클릭 이벤트
+    document.getElementById("eraFilters").addEventListener("click", e => {
+      if (!e.target.classList.contains("chip")) return;
+      selectedEra = e.target.dataset.era;
+      document.querySelectorAll("#eraFilters .chip").forEach(c => c.classList.remove("active-era"));
+      e.target.classList.add("active-era");
+      renderTimeline();
+    });
+
+    document.getElementById("catFilters").addEventListener("click", e => {
+      if (!e.target.classList.contains("chip")) return;
+      selectedCat = e.target.dataset.cat;
+      document.querySelectorAll("#catFilters .chip").forEach(c => c.classList.remove("active-cat"));
+      e.target.classList.add("active-cat");
+      renderTimeline();
+    });
+
+    // 모달 열기/닫기
+    window.openModal = function(id) {
+      const item = DATA.find(d => d.id === id);
+      if (!item) return;
+      currentModalId = id;
+
+      document.getElementById("modalBadges").innerHTML = `
+        <span class="badge badge-era">${item.era}</span>
+        <span class="badge badge-cat">${item.category}</span>
+        <span class="badge badge-year">${item.year}</span>
+      `;
+      document.getElementById("modalTitle").textContent = item.title;
+      document.getElementById("modalMeta").textContent = `위치/관련지: ${item.location}`;
+      document.getElementById("modalDesc").textContent = item.detail;
+      document.getElementById("modalKeywords").innerHTML = item.keywords.map(k => `<span class="keyword">#${k}</span>`).join("");
+
+      updateStampButton();
+      document.getElementById("modalOverlay").classList.add("open");
+    };
+
+    function updateStampButton() {
+      const btn = document.getElementById("btnStamp");
+      const isDone = stampedIds.includes(currentModalId);
+      btn.textContent = isDone ? "탐험 완료! (클릭 시 취소)" : "탐험 완료 도장 찍기";
+      btn.classList.toggle("done", isDone);
+    }
+
+    document.getElementById("btnStamp").addEventListener("click", () => {
+      if (!currentModalId) return;
+      if (stampedIds.includes(currentModalId)) {
+        stampedIds = stampedIds.filter(id => id !== currentModalId);
+      } else {
+        stampedIds.push(currentModalId);
+      }
+      saveStamps();
+      updateStampButton();
+      renderTimeline();
+    });
+
+    document.getElementById("modalClose").addEventListener("click", () => {
+      document.getElementById("modalOverlay").classList.remove("open");
+    });
+
+    document.getElementById("modalOverlay").addEventListener("click", e => {
+      if (e.target.id === "modalOverlay") {
+        document.getElementById("modalOverlay").classList.remove("open");
+      }
+    });
+
+    // 탭 전환
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = tab.dataset.tab;
+        document.getElementById("tab-timeline").classList.toggle("hidden", target !== "timeline");
+        document.getElementById("tab-quiz").classList.toggle("hidden", target !== "quiz");
+        if (target === "quiz") startQuiz();
+      });
+    });
+
+    // 퀴즈 로직
+    let quizList = [];
+    let quizIdx = 0;
+    let quizScore = 0;
+
+    function startQuiz() {
+      quizList = [...DATA].sort(() => Math.random() - 0.5).slice(0, 5);
+      quizIdx = 0;
+      quizScore = 0;
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      const box = document.getElementById("quizBox");
+      if (quizIdx >= quizList.length) {
+        box.innerHTML = `
+          <div style="text-align:center; padding: 1.5rem 0;">
+            <h2 style="font-family:'Noto Serif KR',serif; margin-bottom:0.6rem;">퀴즈 완료!</h2>
+            <p style="font-size:1.1rem; margin-bottom:1.4rem;">총 ${quizList.length}문제 중 <strong>${quizScore}문제</strong>를 맞혔습니다.</p>
+            <button class="nav-tab active" onclick="resetQuizUI()">다시 도전하기</button>
+          </div>
+        `;
+        return;
+      }
+
+      const q = quizList[quizIdx];
+      document.getElementById("quizCounter").textContent = `문제 ${quizIdx + 1} / ${quizList.length}`;
+      document.getElementById("quizScore").textContent = `점수: ${quizScore}`;
+      document.getElementById("quizQuestion").textContent = `[${q.category}] "${q.title}"은(는) 어느 시대의 문화유산(또는 인물)일까요?`;
+      document.getElementById("quizFeedback").textContent = "";
+      document.getElementById("btnNextQuiz").style.display = "none";
+
+      const optsEl = document.getElementById("quizOptions");
+      optsEl.innerHTML = ERA_ORDER.map(era => `
+        <button class="quiz-opt" onclick="checkAnswer(this, '${era}', '${q.era}', '${q.summary.replace(/'/g, "\\'")}')">${era}</button>
+      `).join("");
+    }
+
+    window.checkAnswer = function(btn, chosen, answer, hint) {
+      document.querySelectorAll(".quiz-opt").forEach(b => b.disabled = true);
+      const fb = document.getElementById("quizFeedback");
+      if (chosen === answer) {
+        btn.classList.add("correct");
+        quizScore++;
+        fb.style.color = "#1E5638";
+        fb.textContent = `정답입니다! (${hint})`;
+      } else {
+        btn.classList.add("wrong");
+        document.querySelectorAll(".quiz-opt").forEach(b => {
+          if (b.textContent === answer) b.classList.add("correct");
+        });
+        fb.style.color = "#A94438";
+        fb.textContent = `아쉽네요! 정답은 '${answer}'입니다.`;
+      }
+      document.getElementById("quizScore").textContent = `점수: ${quizScore}`;
+      document.getElementById("btnNextQuiz").style.display = "inline-block";
+    };
+
+    document.getElementById("btnNextQuiz").addEventListener("click", () => {
+      quizIdx++;
+      renderQuiz();
+    });
+
+    window.resetQuizUI = function() {
+      document.getElementById("quizBox").innerHTML = `
+        <div class="quiz-status">
+          <span id="quizCounter"></span>
+          <span id="quizScore"></span>
+        </div>
+        <div class="quiz-question" id="quizQuestion"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <button class="btn-next" id="btnNextQuiz">다음 문제</button>
+      `;
+      document.getElementById("btnNextQuiz").addEventListener("click", () => {
+        quizIdx++;
+        renderQuiz();
+      });
+      startQuiz();
+    };
+
+    // 초기 실행
+    updateProgress();
+    renderTimeline();
+  </script>
+</body>
+</html>
