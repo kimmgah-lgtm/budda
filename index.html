@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>사찰과 보물 역사 연대기 | 초등 5학년 한국사 탐험</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <style>
+    :root {
+      --hanji-bg: #FAF6EE;
+      --hanji-card: #FFFDF8;
+      --hanji-border: #E5DCC8;
+      --dancheong-red: #B83B2A;
+      --dancheong-teal: #2E6B62;
+      --giwa-ink: #2C2C2C;
+      --muted-ink: #5B554C;
+    }
+
+    body {
+      background-color: var(--hanji-bg);
+      color: var(--giwa-ink);
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* 한지 질감 미세 패턴 */
+    .hanji-texture {
+      background-image: radial-gradient(rgba(184, 59, 42, 0.03) 1px, transparent 0),
+                        radial-gradient(rgba(46, 107, 98, 0.03) 1px, transparent 0);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+
+    /* 타임라인 수직선 */
+    .timeline-track::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: 4px;
+      background: linear-gradient(180deg, #B83B2A 0%, #2E6B62 50%, #D97706 100%);
+      border-radius: 999px;
+    }
+
+    @media (min-width: 768px) {
+      .timeline-track::before {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* 용어 풀이 툴팁 버튼 */
+    .vocab-term {
+      border-bottom: 2px dashed var(--dancheong-teal);
+      color: var(--dancheong-teal);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0 2px;
+      border-radius: 3px;
+      transition: background-color 0.15s ease;
+    }
+
+    .vocab-term:hover,
+    .vocab-term:focus {
+      background-color: rgba(46, 107, 98, 0.12);
+      outline: none;
+    }
+
+    /* 스탬프 도장 애니메이션 */
+    @keyframes stampPop {
+      0% { transform: scale(1.6) rotate(-18deg); opacity: 0; }
+      70% { transform: scale(0.95) rotate(-8deg); opacity: 1; }
+      100% { transform: scale(1) rotate(-10deg); opacity: 1; }
+    }
+
+    .stamp-badge {
+      animation: stampPop 0.35s ease-out forwards;
+      transform: rotate(-10deg);
+    }
+
+    /* 모달 스크롤 부드럽게 */
+    .modal-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb {
+      background-color: #D2C7B2;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="hanji-texture min-h-screen flex flex-col">
+
+  <!-- 상단 네비게이션 & 탐험 진행률 바 -->
+  <header class="sticky top-0 z-30 bg-[#FFFDF8]/95 backdrop-blur border-b border-[#E5DCC8] shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#B83B2A] text-white font-bold text-lg shadow-sm" aria-hidden="true">寶</span>
+        <div>
+          <p class="text-xs font-bold text-[#2E6B62] tracking-wide">초등 5학년 한국사 시간 여행</p>
+          <h1 class="text-base sm:text-lg font-extrabold text-[#2C2C2C] leading-tight">사찰과 보물 역사 연대기</h1>
+        </div>
+      </div>
+
+      <!-- 탐험 스탬프 진행률 -->
+      <div class="flex items-center gap-3 bg-[#FAF6EE] border border-[#E5DCC8] rounded-xl px-3.5 py-2">
+        <div class="text-right">
+          <p class="text-xs text-[#5B554C] font-semibold">보물 탐험 스탬프</p>
+          <p class="text-sm font-extrabold text-[#B83B2A]" id="progressText">0 / 7 완료 (0%)</p>
+        </div>
+        <div class="w-24 sm:w-32 h-3 bg-[#E5DCC8] rounded-full overflow-hidden">
+          <div id="progressBar" class="h-full bg-gradient-to-r from-[#B83B2A] to-[#2E6B62] transition-all duration-300" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 히어로 배너 -->
+  <section class="max-w-5xl mx-auto w-full px-4 pt-6 pb-4">
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2E6B62] via-[#265850] to-[#1E443E] text-white p-6 sm:p-8 shadow-md border border-[#1E443E]">
+      <div class="relative z-10 max-w-2xl">
+        <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-[#FDE68A] text-xs font-bold tracking-wide mb-3">
+          5학년 사회 · 불교 문화유산 탐험대
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold leading-snug mb-2">
+          우리 역사의 보물을 찾아 떠나는<br class="hidden sm:inline" /> 사찰 시간 여행!
+        </h2>
+        <p class="text-sm sm:text-base text-white/90 leading-relaxed">
+          삼국시대부터 조선시대까지, 사찰은 그 시대의 믿음과 뛰어난 건축·과학 기술이 담긴 보물 창고였어요.
+          시대별 카드를 눌러 숨은 이야기를 읽고 <strong>탐험 완료 도장</strong>을 모아보세요!
+        </p>
+      </div>
+      <!-- 장식용 단청 기하학 패턴 SVG -->
+      <svg class="hidden md:block absolute right-6 bottom-0 w-44 h-44 opacity-20 pointer-events-none" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+        <circle cx="100" cy="100" r="85" stroke="#FAF6EE" stroke-width="6" stroke-dasharray="10 8" />
+        <circle cx="100" cy="100" r="58" stroke="#FDE68A" stroke-width="4" />
+        <path d="M100 25 L120 75 L175 75 L130 110 L148 165 L100 132 L52 165 L70 110 L25 75 L80 75 Z" stroke="#FAF6EE" stroke-width="3" fill="rgba(250,246,238,0.12)" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- 뷰 전환 탭 & 시대 필터 바 -->
+  <section class="max-w-5xl mx-auto w-full px-4 py-3">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[#FFFDF8] border border-[#E5DCC8] rounded-2xl p-3 shadow-sm">
+      <!-- 모드 전환 탭 -->
+      <div class="flex gap-2" role="tablist" aria-label="학습 메뉴">
+        <button id="tabTimeline" role="tab" aria-selected="true"
+          class="flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#B83B2A] text-white shadow-sm">
+          📜 연대기 탐험
+        </button>
+        <button id="tabQuiz" role="tab" aria-selected="false"
+          class="flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#FAF6EE] text-[#2C2C2C] hover:bg-[#EFE7D6] border border-[#E5DCC8]">
+          🧩 시대 짝짓기 · OX 퀴즈
+        </button>
+      </div>
+
+      <!-- 시대별 필터 바 (연대기 모드에서만 표시) -->
+      <div id="eraFilterBar" class="flex flex-wrap gap-1.5" aria-label="시대 필터">
+        <!-- JS로 버튼 동적 렌더링 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main class="max-w-5xl mx-auto w-full px-4 pb-16 flex-1">
+
+    <!-- 1. 연대기 탐험 뷰 -->
+    <section id="timelineView" class="pt-4">
+      <div class="flex items-center justify-between mb-4 px-1">
+        <p id="filterSummary" class="text-sm sm:text-base font-semibold text-[#5B554C]">
+          전체 7개의 사찰·보물 이야기를 시간 순서대로 만나보세요.
+        </p>
+        <button id="resetProgressBtn" class="text-xs sm:text-sm font-semibold text-[#5B554C] underline hover:text-[#B83B2A] py-1 px-2">
+          스탬프 초기화
+        </button>
+      </div>
+
+      <div id="timelineContainer" class="relative timeline-track space-y-6 sm:space-y-8 py-2">
+        <!-- JS로 타임라인 카드 렌더링 -->
+      </div>
+    </section>
+
+    <!-- 2. 참여형 퀴즈 뷰 -->
+    <section id="quizView" class="hidden pt-4">
+      <div class="bg-[#FFFDF8] border border-[#E5DCC8] rounded-3xl p-5 sm:p-8 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E5DCC8] mb-6">
+          <div>
+            <span class="inline-block px-3 py-1 rounded-full bg-[#2E6B62]/10 text-[#2E6B62] text-xs font-bold mb-1.5">
+              배운 내용을 확인해요!
+            </span>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-[#2C2C2C]">사찰과 보물 시대 짝짓기 · OX 퀴즈</h3>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="quizScoreBadge" class="px-4 py-2 rounded-xl bg-[#FAF6EE] border border-[#E5DCC8] font-extrabold text-[#B83B2A] text-sm sm:text-base">
+              점수: 0 / 6
+            </span>
+            <button id="restartQuizBtn" class="min-h-[44px] px-4 py-2 rounded-xl bg-[#2E6B62] hover:bg-[#23534C] text-white font-bold text-sm transition-colors">
+              다시 풀기
+            </button>
+          </div>
+        </div>
+
+        <div id="quizContainer" class="space-y-6">
+          <!-- JS로 퀴즈 문항 렌더링 -->
+        </div>
+
+        <div id="quizResultBanner" class="hidden mt-8 p-6 rounded-2xl bg-[#FAF6EE] border-2 border-[#2E6B62] text-center">
+          <p id="quizResultTitle" class="text-xl sm:text-2xl font-extrabold text-[#2E6B62] mb-2"></p>
+          <p id="quizResultDesc" class="text-base text-[#2C2C2C] mb-4"></p>
+          <button id="goToTimelineFromQuiz" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#B83B2A] hover:bg-[#992F20] text-white font-bold text-base transition-colors">
+            연대기에서 다시 복습하기
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 상세 탐험 모달 -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/55 backdrop-blur-xs" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="relative w-full max-w-2xl max-h-[90vh] bg-[#FFFDF8] border-2 border-[#E5DCC8] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- 모달 헤더 -->
+      <div class="flex items-start justify-between gap-4 p-5 sm:p-6 bg-[#FAF6EE] border-b border-[#E5DCC8]">
+        <div class="flex items-center gap-3.5">
+          <div id="modalSvgBox" class="w-16 h-16 shrink-0 rounded-2xl bg-white border border-[#E5DCC8] flex items-center justify-center p-2 shadow-xs"></div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span id="modalEraBadge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold"></span>
+              <span id="modalYearText" class="text-xs sm:text-sm font-bold text-[#5B554C]"></span>
+            </div>
+            <h3 id="modalTitle" class="text-xl sm:text-2xl font-extrabold text-[#2C2C2C] leading-snug"></h3>
+            <p id="modalTreasure" class="text-sm sm:text-base font-bold text-[#B83B2A] mt-0.5"></p>
+          </div>
+        </div>
+        <button id="closeModalBtn" aria-label="창 닫기" class="min-w-[44px] min-h-[44px] rounded-xl bg-white border border-[#E5DCC8] hover:bg-[#EFE7D6] text-[#2C2C2C] font-bold text-xl flex items-center justify-center shrink-0">
+          ✕
+        </button>
+      </div>
+
+      <!-- 모달 본문 -->
+      <div class="p-5 sm:p-6 overflow-y-auto modal-scroll space-y-5">
+        <!-- 실제 사진 영역 -->
+        <div id="modalPhotoGallery" class="grid grid-cols-1 gap-3"></div>
+
+        <!-- 쉬운 설명 -->
+        <div>
+          <h4 class="text-sm font-extrabold text-[#2E6B62] uppercase tracking-wider mb-1.5">📖 사찰과 보물 이야기</h4>
+          <p id="modalDescription" class="text-base text-[#2C2C2C] leading-relaxed"></p>
+          <p class="text-xs text-[#5B554C] mt-1.5">💡 점선으로 표시된 낱말을 누르면 쉬운 뜻풀이를 볼 수 있어요.</p>
+        </div>
+
+        <!-- 용어 툴팁 박스 (클릭 시 표시) -->
+        <div id="vocabBox" class="hidden p-3.5 rounded-xl bg-[#2E6B62]/10 border border-[#2E6B62]/30 text-sm text-[#1E443E]">
+          <span class="font-extrabold" id="vocabWord"></span>: <span id="vocabMeaning"></span>
+        </div>
+
+        <!-- 어디에 있을까? -->
+        <div class="p-4 rounded-2xl bg-[#FAF6EE] border border-[#E5DCC8] flex items-start gap-3">
+          <span class="text-xl leading-none mt-0.5" aria-hidden="true">📍</span>
+          <div>
+            <h4 class="text-sm font-extrabold text-[#2C2C2C] mb-0.5">어디에 있을까?</h4>
+            <p id="modalLocation" class="text-sm sm:text-base text-[#5B554C]"></p>
+          </div>
+        </div>
+
+        <!-- 숨은 이야기 & 과학 원리 -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#FFF6E5] border border-[#F3D79B]">
+          <h4 class="text-sm sm:text-base font-extrabold text-[#9A5B00] mb-1.5 flex items-center gap-1.5">
+            <span aria-hidden="true">✨</span> 숨은 이야기 &amp; 과학 원리
+          </h4>
+          <p id="modalSecret" class="text-sm sm:text-base text-[#3F2E14] leading-relaxed"></p>
+        </div>
+
+        <!-- 핵심 키워드 태그 -->
+        <div>
+          <h4 class="text-xs font-bold text-[#5B554C] mb-2">핵심 키워드</h4>
+          <div id="modalTags" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- 모달 푸터 -->
+      <div class="p-4 sm:p-5 bg-[#FAF6EE] border-t border-[#E5DCC8] flex flex-wrap items-center justify-between gap-3">
+        <span id="modalStampStatus" class="text-sm font-bold text-[#5B554C]"></span>
+        <div class="flex items-center gap-2 ml-auto">
+          <button id="toggleStampBtn" class="min-h-[44px] px-5 py-2.5 rounded-xl font-extrabold text-sm sm:text-base transition-all shadow-sm">
+            탐험 완료 도장 찍기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 안내 토스트 -->
+  <div id="toastMsg" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-3 rounded-2xl bg-[#2C2C2C] text-white text-sm font-bold shadow-lg"></div>
+
+  <footer class="bg-[#FFFDF8] border-t border-[#E5DCC8] py-5 text-center text-xs sm:text-sm text-[#5B554C]">
+    <p>초등 5학년 한국사 학습용 · 사찰과 보물 역사 연대기 탐험대</p>
+  </footer>
+
+  <script>
+    // 1. 사찰과 보물 연대기 데이터 (국가유산청 및 초등 5학년 교육과정 기반)
+    const HERITAGE_DATA = [
+      {
+        id: "mireuksa",
+        photos: [
+          { url: "https://www.heritage.go.kr/unisearch/images/national_treasure/thumb/2021030208283100.jpg", caption: "익산 미륵사지 석탑 (국가유산청)" }
+        ],
+        era: "삼국시대",
+        eraColor: "bg-[#D97706] text-white",
+        yearLabel: "삼국시대 (백제 무왕)",
+        temple: "익산 미륵사지",
+        treasure: "국보 · 익산 미륵사지 석탑",
+        summary: "나무로 만들던 탑을 돌로 바꾸어 쌓기 시작한 백제의 거대한 석탑이에요.",
+        description: "백제 무왕 때 지어진 미륵사는 당시 동아시아에서 손꼽히던 큰 절이에요. 이곳에 남아 있는 {목탑}의 모습을 그대로 흉내 내어 돌로 쌓은 석탑이 바로 미륵사지 석탑입니다. 돌을 마치 나무 기둥과 지붕처럼 정교하게 깎아 맞추어, 우리나라에 남아 있는 가장 오래되고 규모가 큰 석탑으로 손꼽혀요.",
+        location: "전북특별자치도 익산시 금마면 (익산 미륵사지)",
+        secret: "미륵사지 석탑을 수리하기 위해 해체하던 중, 1층 중앙의 커다란 돌기둥인 {심주석} 안에서 금으로 만든 상자와 유리 사리병, 그리고 누가 왜 탑을 세웠는지 적은 '금제사리봉영기'가 발견되어 백제 역사의 비밀이 밝혀졌어요!",
+        tags: ["#삼국시대", "#백제", "#석탑의시작", "#국보"],
+        vocab: {
+          "목탑": "나무(목재)를 주재료로 하여 높이 쌓아 올린 불탑을 말해요.",
+          "심주석": "탑의 한가운데를 위아래로 관통하며 중심을 잡아주는 커다란 돌기둥이에요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <rect x="14" y="66" width="52" height="7" rx="1.5" fill="#78716C"/>
+          <rect x="20" y="54" width="40" height="12" fill="#A8A29E"/>
+          <rect x="35" y="57" width="10" height="9" fill="#44403C"/>
+          <path d="M16 54 L64 54 L60 49 L20 49 Z" fill="#57534E"/>
+          <rect x="24" y="40" width="32" height="9" fill="#A8A29E"/>
+          <path d="M20 40 L60 40 L56 35 L24 35 Z" fill="#57534E"/>
+          <rect x="28" y="27" width="24" height="8" fill="#A8A29E"/>
+          <path d="M24 27 L56 27 L52 22 L28 22 Z" fill="#57534E"/>
+          <rect x="32" y="16" width="16" height="6" fill="#A8A29E"/>
+          <path d="M29 16 L51 16 L47 12 L33 12 Z" fill="#57534E"/>
+        </svg>`
+      },
+      {
+        id: "hwangnyongsa",
+        photos: [
+          { url: "https://devin.aks.ac.kr/image/e81117ad-ae88-4782-bd33-f86539ea3fbb?preset=orig", caption: "경주 황룡사지 구층목탑 터 (한국민족문화대백과사전)" }
+        ],
+        era: "삼국시대",
+        eraColor: "bg-[#D97706] text-white",
+        yearLabel: "삼국시대 (신라 선덕여왕)",
+        temple: "경주 황룡사지",
+        templeSub: "터만 남아 있는 신라의 호국 사찰",
+        treasure: "황룡사 구층목탑 & 보물 · 금동찰주본기",
+        summary: "이웃 나라의 침입을 막고 신라의 평화를 바라며 세운 9층 나무 탑이에요.",
+        description: "신라의 중심 사찰이었던 황룡사에는 선덕여왕 때 백제의 유명한 장인 아비지를 초청해 세운 웅장한 {구층목탑}이 있었어요. 지금 탑은 남아 있지 않지만, 탑이 세워진 내력과 수리 기록을 새긴 '경주 황룡사 구층목탑 금동찰주본기'가 보물로 전해져 당시의 모습을 알려줍니다.",
+        location: "경상북도 경주시 (황룡사지) · 금동찰주본기는 국립경주박물관 소장",
+        secret: "9개의 층마다 신라를 괴롭히던 주변 9개 나라를 하나씩 물리친다는 {호국 불교}의 염원을 담았어요. 아쉽게도 고려 시대 몽골의 침입 때 불에 타 사라지고, 지금은 거대한 주춧돌만 남아 옛 영광을 전해줍니다.",
+        tags: ["#삼국시대", "#신라", "#호국불교", "#9층목탑"],
+        vocab: {
+          "구층목탑": "나무로 만든 9층 높이의 거대한 탑으로, 신라의 국력을 상징했어요.",
+          "호국 불교": "부처님의 가르침과 힘으로 나라를 외적의 침입으로부터 지킨다는 믿음이에요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <line x1="40" y1="6" x2="40" y2="16" stroke="#B83B2A" stroke-width="2.5"/>
+          <path d="M32 18 L48 18 L40 12 Z" fill="#B83B2A"/>
+          <path d="M28 25 L52 25 L46 20 L34 20 Z" fill="#B83B2A"/>
+          <path d="M24 33 L56 33 L50 27 L30 27 Z" fill="#B83B2A"/>
+          <path d="M20 41 L60 41 L54 35 L26 35 Z" fill="#B83B2A"/>
+          <path d="M17 49 L63 49 L57 43 L23 43 Z" fill="#B83B2A"/>
+          <path d="M14 57 L66 57 L60 51 L20 51 Z" fill="#B83B2A"/>
+          <rect x="26" y="57" width="28" height="10" fill="#78350F"/>
+          <rect x="12" y="67" width="56" height="6" rx="1.5" fill="#57534E"/>
+        </svg>`
+      },
+      {
+        id: "bulguksa",
+        photos: [
+          { url: "https://www.heritage.go.kr/images/2025/contents/unesco/view01-01/img01.jpg", caption: "경주 불국사 전경 (국가유산청)" },
+          { url: "https://www.heritage.go.kr/unisearch/images/national_treasure/thumb/2021042208550900.jpg", caption: "경주 석굴암 본존불 (국가유산청)" }
+        ],
+        era: "통일신라",
+        eraColor: "bg-[#B83B2A] text-white",
+        yearLabel: "751년 착공 ~ 774년 완공",
+        temple: "경주 불국사 · 석굴암",
+        treasure: "국보 · 다보탑 · 석가탑 · 석굴암 석굴",
+        summary: "통일신라 불교 예술의 황금기를 보여주는 세계문화유산이에요.",
+        description: "신라 경덕왕 때 김대성이 짓기 시작해 혜공왕 때 완성한 불국사와 석굴암은 부처님의 세상을 땅 위에 아름답게 표현한 곳이에요. 불국사 앞마당에는 화려한 모양의 {다보탑}과 단정하고 균형 잡힌 {석가탑}(삼층석탑)이 나란히 서 있어 멋진 조화를 이룹니다.",
+        location: "경상북도 경주시 토함산 (1995년 유네스코 세계문화유산 공동 등재)",
+        secret: "석굴암은 자연 동굴이 아니라 360여 개의 넓적한 화강암 돌을 둥글게 쌓아 천장을 만든 인공 석굴이에요! 바닥 아래로 흐르는 물과 치밀한 돌 배치 덕분에 습기를 조절하고 공기가 순환하도록 설계된 놀라운 과학 유산이랍니다.",
+        tags: ["#통일신라", "#유네스코세계유산", "#김대성", "#과학건축"],
+        vocab: {
+          "다보탑": "화려하고 복잡한 모양으로 만든 탑으로, 10원짜리 동전 뒷면에도 그려져 있어요.",
+          "석가탑": "정식 이름은 '불국사 삼층석탑'이며, 단순하면서도 완벽한 비례미를 자랑해요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <rect x="12" y="66" width="56" height="6" rx="1.5" fill="#44403C"/>
+          <rect x="22" y="54" width="36" height="12" fill="#D6D3D1"/>
+          <line x1="28" y1="54" x2="28" y2="66" stroke="#78716C" stroke-width="2"/>
+          <line x1="52" y1="54" x2="52" y2="66" stroke="#78716C" stroke-width="2"/>
+          <rect x="19" y="49" width="42" height="5" fill="#A8A29E"/>
+          <rect x="27" y="38" width="26" height="11" fill="#E7E5E4"/>
+          <path d="M23 38 L57 38 L52 33 L28 33 Z" fill="#78716C"/>
+          <rect x="32" y="24" width="16" height="9" fill="#E7E5E4"/>
+          <path d="M26 24 L54 24 L40 11 Z" fill="#57534E"/>
+          <circle cx="40" cy="9" r="2.5" fill="#D97706"/>
+        </svg>`
+      },
+      {
+        id: "buseoksa",
+        photos: [
+          { url: "https://www.heritage.go.kr/unisearch/images/national_treasure/thumb/2022040510393600.JPG", caption: "영주 부석사 무량수전 (국가유산청)" }
+        ],
+        era: "고려",
+        eraColor: "bg-[#2E6B62] text-white",
+        yearLabel: "고려 시대 (목조건축 대표)",
+        temple: "영주 부석사",
+        treasure: "국보 · 영주 부석사 무량수전",
+        summary: "가운데가 볼록한 배흘림기둥이 눈을 편안하게 해주는 목조 건물이에요.",
+        description: "무량수전은 부석사에서 가장 중심이 되는 불전으로, 고려 시대의 뛰어난 나무 건축 기술을 보여줍니다. 기둥 위에만 지붕의 무게를 받치는 장치를 올린 {주심포} 양식으로 지어져 단정하고 힘 있는 아름다움을 느낄 수 있어요.",
+        location: "경상북도 영주시 부석면 (부석사)",
+        secret: "무량수전의 기둥은 위아래가 똑같은 일자가 아니라, 가운데 부분이 살짝 볼록하게 깎인 {배흘림기둥}이에요. 이렇게 만들면 건물이 무거운 지붕을 거뜬히 받치는 것처럼 안정감 있게 보이고, 멀리서 보아도 기둥이 홀쭉해 보이지 않는 착시 보정 효과가 있답니다!",
+        tags: ["#고려시대", "#목조건축", "#배흘림기둥", "#착시효과"],
+        vocab: {
+          "주심포": "지붕 처마의 무게를 받치기 위해 기둥 꼭대기 위에만 공포(받침 나무)를 짜 올린 건축 방식이에요.",
+          "배흘림기둥": "기둥의 가운데 부분을 약간 볼록하게 다듬어 시각적 안정감을 주는 전통 기둥 모양이에요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <path d="M8 34 Q40 16 72 34 L66 38 Q40 24 14 38 Z" fill="#2C2C2C"/>
+          <path d="M14 38 L66 38 L62 42 L18 42 Z" fill="#B83B2A"/>
+          <rect x="18" y="42" width="44" height="22" fill="#FEF3C7"/>
+          <path d="M22 42 Q20 53 22 64 L26 64 Q28 53 26 42 Z" fill="#92400E"/>
+          <path d="M38 42 Q36 53 38 64 L42 64 Q44 53 42 42 Z" fill="#92400E"/>
+          <path d="M54 42 Q52 53 54 64 L58 64 Q60 53 58 42 Z" fill="#92400E"/>
+          <rect x="12" y="64" width="56" height="7" rx="1.5" fill="#78716C"/>
+        </svg>`
+      },
+      {
+        id: "palman",
+        photos: [
+          { url: "https://www.heritage.go.kr/unisearch/images/national_treasure/thumb/2021041309381300.jpg", caption: "합천 해인사 대장경판 (국가유산청)" }
+        ],
+        era: "고려",
+        eraColor: "bg-[#2E6B62] text-white",
+        yearLabel: "고려 시대 (몽골 침입 시기)",
+        temple: "합천 해인사 (대장경판)",
+        treasure: "국보 · 합천 해인사 대장경판 (팔만대장경)",
+        summary: "외적의 침입을 부처의 힘으로 이겨내고자 정성을 다해 새긴 목판이에요.",
+        description: "고려 시대에 몽골군이 쳐들어오자, 고려 사람들은 나라를 지키려는 간절한 마음으로 8만여 장이 넘는 나무판에 불교 경전을 한 글자씩 새겼어요. 이것이 바로 오늘날 '팔만대장경'이라 불리는 합천 해인사 대장경판으로, 세계적으로도 가치를 인정받은 {세계기록유산}입니다.",
+        location: "경상남도 합천군 가야면 (해인사)",
+        secret: "나무판이 오랜 세월 동안 썩거나 뒤틀리지 않도록 산벚나무와 돌배나무 등을 바닷물에 담갔다가 찌고 말리는 정성스러운 과정을 거쳤어요. 게다가 판 양쪽 끝에는 나무 마구리를 대고 옻칠을 해, 벌레가 먹지 않고 인쇄가 선명하게 잘 되도록 만들었답니다!",
+        tags: ["#고려시대", "#팔만대장경", "#호국불교", "#세계기록유산"],
+        vocab: {
+          "세계기록유산": "인류 역사와 문화에서 소중한 가치가 있어 유네스코가 지정해 보호하는 귀중한 기록물이에요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <rect x="12" y="20" width="56" height="40" rx="4" fill="#92400E"/>
+          <rect x="16" y="24" width="48" height="32" rx="2" fill="#D97706"/>
+          <line x1="22" y1="30" x2="58" y2="30" stroke="#78350F" stroke-width="2.5"/>
+          <line x1="22" y1="37" x2="58" y2="37" stroke="#78350F" stroke-width="2.5"/>
+          <line x1="22" y1="44" x2="58" y2="44" stroke="#78350F" stroke-width="2.5"/>
+          <line x1="22" y1="51" x2="48" y2="51" stroke="#78350F" stroke-width="2.5"/>
+          <rect x="10" y="18" width="5" height="44" rx="2" fill="#451A03"/>
+          <rect x="65" y="18" width="5" height="44" rx="2" fill="#451A03"/>
+        </svg>`
+      },
+      {
+        id: "janggyeong",
+        photos: [
+          { url: "https://www.heritage.go.kr/unisearch/images/national_treasure/thumb/1613042.jpg", caption: "합천 해인사 장경판전 (국가유산청)" }
+        ],
+        era: "조선",
+        eraColor: "bg-[#4338CA] text-white",
+        yearLabel: "1488년 완공 (조선 시대)",
+        temple: "합천 해인사 (장경판전)",
+        treasure: "국보 · 합천 해인사 장경판전",
+        summary: "팔만대장경을 500년 넘게 썩지 않게 지켜낸 조선의 과학적 보관소예요.",
+        description: "고려 때 만든 팔만대장경을 안전하게 보관하기 위해 조선 초기에 해인사로 옮겨 지은 목판 보관 건물이 장경판전이에요. 1488년에 완성된 이 건물은 화려한 장식 대신 오직 대장경판을 오래 보존하는 데 온 힘을 기울여 설계되었습니다.",
+        location: "경상남도 합천군 가야면 (해인사 · 유네스코 세계문화유산)",
+        secret: "장경판전의 벽을 보면 앞면과 뒷면, 그리고 위쪽과 아래쪽 창문의 크기가 서로 달라요! 이를 통해 바깥의 시원한 바람이 아래 창으로 들어와 경판 사이를 지나 위쪽 창으로 빠져나가며 {자연 통풍}을 일으키고, 바닥 아래 묻은 숯·소금·석회·모래가 습기를 자동으로 조절해 줍니다.",
+        tags: ["#조선시대", "#장경판전", "#자연통풍", "#유네스코세계유산"],
+        vocab: {
+          "자연 통풍": "기계나 전기 없이 창문 위치와 크기 차이만으로 바람이 스스로 순환하게 만드는 친환경 과학 원리예요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <path d="M10 30 L40 16 L70 30 L64 33 L16 33 Z" fill="#2C2C2C"/>
+          <rect x="16" y="33" width="48" height="32" fill="#FDE68A" stroke="#78350F" stroke-width="2"/>
+          <!-- 위쪽 작은 창 / 아래쪽 큰 창 -->
+          <rect x="22" y="37" width="14" height="7" fill="#2E6B62"/>
+          <rect x="44" y="37" width="14" height="7" fill="#2E6B62"/>
+          <rect x="21" y="48" width="16" height="13" fill="#2E6B62"/>
+          <rect x="43" y="48" width="16" height="13" fill="#2E6B62"/>
+          <line x1="29" y1="48" x2="29" y2="61" stroke="#FDE68A" stroke-width="1.5"/>
+          <line x1="51" y1="48" x2="51" y2="61" stroke="#FDE68A" stroke-width="1.5"/>
+          <rect x="12" y="65" width="56" height="6" rx="1.5" fill="#78716C"/>
+        </svg>`
+      },
+      {
+        id: "beopjusa",
+        photos: [
+          { url: "https://devin.aks.ac.kr/image/4160e7d7-a4db-4fff-9dc8-d5b71eb1d267?preset=orig", caption: "보은 법주사 팔상전 (한국민족문화대백과사전)" }
+        ],
+        era: "조선",
+        eraColor: "bg-[#4338CA] text-white",
+        yearLabel: "1625년 중건 (조선 인조 2년)",
+        temple: "보은 법주사",
+        treasure: "국보 · 보은 법주사 팔상전",
+        summary: "우리나라에 현재 남아 있는 유일한 5층 나무 탑(목탑)이에요.",
+        description: "삼국시대에는 나무로 높은 탑을 많이 지었지만 전쟁과 화재로 대부분 사라졌어요. 보은 법주사의 {팔상전}은 조선 인조 때인 1625년에 다시 세워진 건물로, 오늘날 우리나라에 온전히 남아 있는 유일한 5층 목탑이라는 큰 가치를 지니고 있습니다.",
+        location: "충청북도 보은군 속리산면 (법주사)",
+        secret: "팔상전이라는 이름은 건물 안에 석가모니 부처의 일생을 8가지 장면으로 나누어 그린 그림인 '팔상도'가 모셔져 있어서 붙여졌어요. 1층부터 5층까지 겉에서 보기엔 5층이지만, 내부는 하나로 트여 있고 한가운데 거대한 나무 기둥이 꼭대기까지 탑을 튼튼히 지탱하고 있답니다!",
+        tags: ["#조선시대", "#유일한5층목탑", "#법주사", "#국보"],
+        vocab: {
+          "팔상전": "부처의 일생을 8장면으로 그린 그림(팔상도)을 모신 전각이라는 뜻이에요."
+        },
+        svg: `<svg viewBox="0 0 80 80" class="w-full h-full" aria-hidden="true">
+          <line x1="40" y1="7" x2="40" y2="15" stroke="#D97706" stroke-width="2.5"/>
+          <path d="M29 21 L51 21 L45 15 L35 15 Z" fill="#2E6B62"/>
+          <path d="M25 30 L55 30 L49 24 L31 24 Z" fill="#2E6B62"/>
+          <path d="M21 39 L59 39 L53 33 L27 33 Z" fill="#2E6B62"/>
+          <path d="M17 48 L63 48 L57 42 L23 42 Z" fill="#2E6B62"/>
+          <path d="M13 57 L67 57 L61 51 L19 51 Z" fill="#2E6B62"/>
+          <rect x="24" y="57" width="32" height="9" fill="#B83B2A"/>
+          <rect x="12" y="66" width="56" height="6" rx="1.5" fill="#57534E"/>
+        </svg>`
+      }
+    ];
+
+    // 2. 퀴즈 데이터 (시대 짝짓기 + OX 퀴즈 6문항)
+    const QUIZ_DATA = [
+      {
+        id: "q1",
+        type: "시대 짝짓기",
+        question: "나무 탑에서 돌탑으로 변하는 모습을 보여주며, 백제 무왕 때 세워진 '익산 미륵사지 석탑'은 어느 시대 보물일까요?",
+        options: ["삼국시대 (백제)", "통일신라", "고려", "조선"],
+        answerIndex: 0,
+        explanation: "정답은 '삼국시대 (백제)'예요! 미륵사지 석탑은 백제 무왕 때 세워진 우리나라에서 가장 크고 오래된 석탑이랍니다."
+      },
+      {
+        id: "q2",
+        type: "OX 퀴즈",
+        question: "경주 불국사와 석굴암은 통일신라 경덕왕 때 김대성이 짓기 시작해 혜공왕 때 완성한 유네스코 세계문화유산이다.",
+        options: ["O (맞아요)", "X (틀려요)"],
+        answerIndex: 0,
+        explanation: "O! 751년에 공사를 시작해 774년에 완성되었으며, 1995년 유네스코 세계문화유산으로 함께 등재되었어요."
+      },
+      {
+        id: "q3",
+        type: "시대 짝짓기",
+        question: "기둥 가운데가 볼록한 '배흘림기둥'을 사용해 안정감을 준 영주 부석사 무량수전은 어느 시대의 대표 목조건축일까요?",
+        options: ["삼국시대", "통일신라", "고려", "조선"],
+        answerIndex: 2,
+        explanation: "정답은 '고려'예요! 부석사 무량수전은 고려 시대의 뛰어난 나무 건축 기술을 대표하는 국보입니다."
+      },
+      {
+        id: "q4",
+        type: "OX 퀴즈",
+        question: "합천 해인사의 '팔만대장경(대장경판)'과 이를 보관하는 '장경판전'은 모두 고려 시대에 만들어졌다.",
+        options: ["O (맞아요)", "X (틀려요)"],
+        answerIndex: 1,
+        explanation: "X! 팔만대장경판은 고려 시대에 몽골의 침입을 이겨내기 위해 만들었고, 대장경을 보관하는 건물인 '장경판전'은 조선 시대(1488년)에 완공되었어요."
+      },
+      {
+        id: "q5",
+        type: "시대 짝짓기",
+        question: "위아래 창문 크기를 다르게 만들어 바람이 저절로 통하도록 설계한 과학적인 건물 '해인사 장경판전'은 어느 시대 유산일까요?",
+        options: ["삼국시대", "통일신라", "고려", "조선"],
+        answerIndex: 3,
+        explanation: "정답은 '조선'이에요! 1488년 조선 시대에 지어져 500년 넘게 팔만대장경을 썩지 않게 지켜냈답니다."
+      },
+      {
+        id: "q6",
+        type: "OX 퀴즈",
+        question: "충청북도 보은에 있는 '법주사 팔상전'은 현재 우리나라에 남아 있는 유일한 5층 목탑이다.",
+        options: ["O (맞아요)", "X (틀려요)"],
+        answerIndex: 0,
+        explanation: "O! 1625년(조선 인조 2년)에 다시 지어진 법주사 팔상전은 현재 우리나라에 온전히 남아 있는 유일한 5층 나무 탑이에요."
+      }
+    ];
+
+    const ERAS = ["전체", "삼국시대", "통일신라", "고려", "조선"];
+
+    // 3. 상태 관리
+    const state = {
+      activeTab: "timeline",
+      selectedEra: "전체",
+      completedIds: new Set(),
+      activeModalId: null,
+      quizAnswers: {} // { q1: selectedIndex }
+    };
+
+    // localStorage 안전 로드
+    function loadSavedProgress() {
+      try {
+        const raw = localStorage.getItem("temple_timeline_completed_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            state.completedIds = new Set(parsed);
+          }
+        }
+      } catch (e) {
+        // 스토리지 접근이 제한된 환경에서도 안전하게 동작
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem("temple_timeline_completed_v1", JSON.stringify([...state.completedIds]));
+      } catch (e) {
+        // 무시
+      }
+    }
+
+    // 토스트 알림
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toastMsg");
+      toast.textContent = msg;
+      toast.classList.remove("hidden");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 2400);
+    }
+
+    // 진행률 업데이트
+    function updateProgressUI() {
+      const total = HERITAGE_DATA.length;
+      const done = state.completedIds.size;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      document.getElementById("progressText").textContent = `${done} / ${total} 완료 (${pct}%)`;
+      document.getElementById("progressBar").style.width = `${pct}%`;
+    }
+
+    // 시대 필터 버튼 렌더링
+    function renderEraFilters() {
+      const bar = document.getElementById("eraFilterBar");
+      bar.innerHTML = ERAS.map(era => {
+        const count = era === "전체"
+          ? HERITAGE_DATA.length
+          : HERITAGE_DATA.filter(item => item.era === era).length;
+        const isActive = state.selectedEra === era;
+        return `
+          <button type="button" data-era="${era}"
+            class="min-h-[40px] px-3.5 py-1.5 rounded-xl text-sm font-bold transition-all border ${
+              isActive
+                ? "bg-[#2E6B62] text-white border-[#2E6B62] shadow-xs"
+                : "bg-[#FAF6EE] text-[#2C2C2C] border-[#E5DCC8] hover:bg-[#EFE7D6]"
+            }">
+            ${era} <span class="opacity-80 text-xs">(${count})</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    // 타임라인 카드 렌더링
+    function renderTimeline() {
+      const container = document.getElementById("timelineContainer");
+      const summary = document.getElementById("filterSummary");
+
+      const items = state.selectedEra === "전체"
+        ? HERITAGE_DATA
+        : HERITAGE_DATA.filter(item => item.era === state.selectedEra);
+
+      summary.textContent = state.selectedEra === "전체"
+        ? `전체 ${items.length}개의 사찰·보물 이야기를 시간 순서대로 만나보세요.`
+        : `'${state.selectedEra}' 사찰·보물 이야기 ${items.length}개를 보고 있어요.`;
+
+      container.innerHTML = items.map((item, idx) => {
+        const isDone = state.completedIds.has(item.id);
+        const isRight = idx % 2 === 1;
+        return `
+          <div class="relative pl-12 md:pl-0 flex flex-col md:flex-row ${isRight ? "md:flex-row-reverse" : ""} items-stretch md:items-center">
+            <!-- 타임라인 중앙 점 -->
+            <div class="absolute left-[11px] md:left-1/2 md:-translate-x-1/2 top-6 md:top-1/2 md:-translate-y-1/2 w-5 h-5 rounded-full border-4 border-[#FAF6EE] shadow-sm z-10 ${
+              isDone ? "bg-[#2E6B62]" : "bg-[#B83B2A]"
+            }" aria-hidden="true"></div>
+
+            <!-- 카드 래퍼 -->
+            <div class="w-full md:w-[46%]">
+              <button type="button" data-open-id="${item.id}"
+                class="w-full text-left group relative bg-[#FFFDF8] hover:bg-white border-2 ${
+                  isDone ? "border-[#2E6B62]" : "border-[#E5DCC8] hover:border-[#B83B2A]"
+                } rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[#B83B2A]">
+
+                ${isDone ? `
+                  <span class="stamp-badge absolute top-3 right-3 px-2.5 py-1 rounded-lg border-2 border-[#2E6B62] text-[#2E6B62] bg-[#E6F4F1] text-xs font-extrabold">
+                    ✓ 탐험 완료
+                  </span>
+                ` : ""}
+
+                <div class="mb-3.5 overflow-hidden rounded-xl border border-[#E5DCC8] bg-[#FAF6EE] relative aspect-[16/9]">
+                  ${item.photos && item.photos.length > 0 ? `
+                    <img src="${item.photos[0].url}" referrerpolicy="no-referrer" alt="${item.temple} ${item.treasure}" loading="lazy"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="hidden w-full h-full flex items-center justify-center p-4">${item.svg}</div>
+                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/55 text-white text-[11px] font-medium backdrop-blur-xs">
+                      ${item.photos[0].caption}
+                    </span>
+                  ` : `
+                    <div class="w-full h-full flex items-center justify-center p-4">${item.svg}</div>
+                  `}
+                </div>
+
+                <div class="flex items-start gap-3.5">
+                  <div class="w-12 h-12 shrink-0 rounded-xl bg-[#FAF6EE] border border-[#E5DCC8] p-1.5 flex items-center justify-center">
+                    ${item.svg}
+                  </div>
+                  <div class="flex-1 min-w-0 pr-12">
+                    <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                      <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold ${item.eraColor}">${item.era}</span>
+                      <span class="text-xs font-semibold text-[#5B554C]">${item.yearLabel}</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-extrabold text-[#2C2C2C] group-hover:text-[#B83B2A] transition-colors">${item.temple}</h3>
+                    <p class="text-sm font-bold text-[#B83B2A] mt-0.5">${item.treasure}</p>
+                  </div>
+                </div>
+
+                <p class="mt-3 text-sm sm:text-base text-[#5B554C] leading-relaxed">${item.summary}</p>
+                <div class="mt-3 flex items-center justify-between text-xs sm:text-sm font-bold text-[#2E6B62]">
+                  <span>자세히 탐험하기 →</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- 반대편 여백 -->
+            <div class="hidden md:block md:w-[46%]"></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 텍스트 내 {용어} 를 클릭 가능한 툴팁 버튼으로 변환
+    function formatWithVocab(text, vocabObj) {
+      return text.replace(/\{([^}]+)\}/g, (_, word) => {
+        if (vocabObj && vocabObj[word]) {
+          return `<button type="button" class="vocab-term" data-vocab-word="${word}">${word}</button>`;
+        }
+        return `<strong>${word}</strong>`;
+      });
+    }
+
+    // 모달 열기
+    function openModal(itemId) {
+      const item = HERITAGE_DATA.find(d => d.id === itemId);
+      if (!item) return;
+
+      state.activeModalId = itemId;
+      document.getElementById("modalSvgBox").innerHTML = item.svg;
+
+      const eraBadge = document.getElementById("modalEraBadge");
+      eraBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-extrabold ${item.eraColor}`;
+      eraBadge.textContent = item.era;
+
+      document.getElementById("modalYearText").textContent = item.yearLabel;
+      const galleryEl = document.getElementById("modalPhotoGallery");
+      if (item.photos && item.photos.length > 0) {
+        galleryEl.className = item.photos.length > 1 ? "grid grid-cols-1 sm:grid-cols-2 gap-3" : "grid grid-cols-1 gap-3";
+        galleryEl.innerHTML = item.photos.map(p => `
+          <figure class="overflow-hidden rounded-2xl border border-[#E5DCC8] bg-[#FAF6EE]">
+            <div class="aspect-[16/10] w-full overflow-hidden bg-[#EFE7D6] relative">
+              <img src="${p.url}" referrerpolicy="no-referrer" alt="${p.caption}"
+                class="w-full h-full object-cover"
+                onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+              <div class="hidden w-full h-full flex items-center justify-center p-6">${item.svg}</div>
+            </div>
+            <figcaption class="px-3 py-1.5 text-xs font-semibold text-[#5B554C] text-center bg-[#FAF6EE]">
+              📷 ${p.caption}
+            </figcaption>
+          </figure>
+        `).join("");
+        galleryEl.classList.remove("hidden");
+      } else {
+        galleryEl.innerHTML = "";
+        galleryEl.classList.add("hidden");
+      }
+
+      document.getElementById("modalTitle").textContent = item.temple;
+      document.getElementById("modalTreasure").textContent = item.treasure;
+      document.getElementById("modalDescription").innerHTML = formatWithVocab(item.description, item.vocab);
+      document.getElementById("modalLocation").textContent = item.location;
+      document.getElementById("modalSecret").innerHTML = formatWithVocab(item.secret, item.vocab);
+
+      const tagsEl = document.getElementById("modalTags");
+      tagsEl.innerHTML = item.tags.map(t =>
+        `<span class="px-3 py-1 rounded-full bg-[#FAF6EE] border border-[#E5DCC8] text-xs font-bold text-[#5B554C]">${t}</span>`
+      ).join("");
+
+      document.getElementById("vocabBox").classList.add("hidden");
+      updateModalStampButton();
+
+      const modal = document.getElementById("detailModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("detailModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+      state.activeModalId = null;
+    }
+
+    function updateModalStampButton() {
+      if (!state.activeModalId) return;
+      const isDone = state.completedIds.has(state.activeModalId);
+      const btn = document.getElementById("toggleStampBtn");
+      const statusEl = document.getElementById("modalStampStatus");
+
+      if (isDone) {
+        btn.textContent = "✓ 탐험 완료! (취소하려면 클릭)";
+        btn.className = "min-h-[44px] px-5 py-2.5 rounded-xl font-extrabold text-sm sm:text-base transition-all bg-[#2E6B62] text-white hover:bg-[#23534C] shadow-sm";
+        statusEl.textContent = "이 보물의 탐험 도장을 획득했어요!";
+        statusEl.className = "text-sm font-bold text-[#2E6B62]";
+      } else {
+        btn.textContent = "탐험 완료 도장 찍기";
+        btn.className = "min-h-[44px] px-5 py-2.5 rounded-xl font-extrabold text-sm sm:text-base transition-all bg-[#B83B2A] text-white hover:bg-[#992F20] shadow-sm";
+        statusEl.textContent = "이야기를 다 읽었다면 도장을 찍어보세요.";
+        statusEl.className = "text-sm font-bold text-[#5B554C]";
+      }
+    }
+
+    // 퀴즈 렌더링
+    function renderQuiz() {
+      const container = document.getElementById("quizContainer");
+      let correctCount = 0;
+
+      container.innerHTML = QUIZ_DATA.map((q, idx) => {
+        const chosen = state.quizAnswers[q.id];
+        const isAnswered = chosen !== undefined;
+        const isCorrect = chosen === q.answerIndex;
+        if (isCorrect) correctCount++;
+
+        return `
+          <div class="p-5 rounded-2xl bg-[#FAF6EE] border border-[#E5DCC8]">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-[#2E6B62] text-white">문제 ${idx + 1}</span>
+              <span class="text-xs font-bold text-[#B83B2A]">${q.type}</span>
+            </div>
+            <p class="text-base sm:text-lg font-bold text-[#2C2C2C] mb-4 leading-relaxed">${q.question}</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${q.options.map((opt, oIdx) => {
+                let btnStyle = "bg-white border-[#E5DCC8] text-[#2C2C2C] hover:border-[#2E6B62]";
+                if (isAnswered) {
+                  if (oIdx === q.answerIndex) {
+                    btnStyle = "bg-[#E6F4F1] border-2 border-[#2E6B62] text-[#1E443E] font-extrabold";
+                  } else if (oIdx === chosen && !isCorrect) {
+                    btnStyle = "bg-[#FDE8E6] border-2 border-[#B83B2A] text-[#8B2318]";
+                  } else {
+                    btnStyle = "bg-white/60 border-[#E5DCC8] text-[#5B554C] opacity-70";
+                  }
+                }
+                return `
+                  <button type="button" data-quiz-id="${q.id}" data-option-idx="${oIdx}"
+                    class="min-h-[46px] px-4 py-2.5 rounded-xl border text-left text-sm sm:text-base font-semibold transition-all ${btnStyle}">
+                    ${opt}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+
+            ${isAnswered ? `
+              <div class="mt-4 p-3.5 rounded-xl text-sm sm:text-base leading-relaxed ${
+                isCorrect ? "bg-[#E6F4F1] text-[#1E443E]" : "bg-[#FFF1F0] text-[#7A2016]"
+              }">
+                <strong class="block mb-0.5">${isCorrect ? "🎉 정답이에요!" : "💡 아쉽네요! 다시 확인해 볼까요?"}</strong>
+                ${q.explanation}
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("quizScoreBadge").textContent = `점수: ${correctCount} / ${QUIZ_DATA.length}`;
+
+      const answeredAll = Object.keys(state.quizAnswers).length === QUIZ_DATA.length;
+      const resultBanner = document.getElementById("quizResultBanner");
+      if (answeredAll) {
+        resultBanner.classList.remove("hidden");
+        document.getElementById("quizResultTitle").textContent =
+          `모든 문제를 풀었어요! (${QUIZ_DATA.length}문제 중 ${correctCount}문제 정답)`;
+        document.getElementById("quizResultDesc").textContent =
+          correctCount === QUIZ_DATA.length
+            ? "대단해요! 우리 역사의 사찰과 보물을 완벽하게 이해한 멋진 역사 탐험가예요!"
+            : "잘했어요! 헷갈렸던 문제는 연대기 탐험에서 카드를 눌러 한 번 더 살펴보세요.";
+      } else {
+        resultBanner.classList.add("hidden");
+      }
+    }
+
+    // 탭 전환
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      const isTimeline = tabName === "timeline";
+
+      document.getElementById("timelineView").classList.toggle("hidden", !isTimeline);
+      document.getElementById("eraFilterBar").classList.toggle("hidden", !isTimeline);
+      document.getElementById("quizView").classList.toggle("hidden", isTimeline);
+
+      const tabTimeline = document.getElementById("tabTimeline");
+      const tabQuiz = document.getElementById("tabQuiz");
+
+      tabTimeline.setAttribute("aria-selected", String(isTimeline));
+      tabQuiz.setAttribute("aria-selected", String(!isTimeline));
+
+      tabTimeline.className = isTimeline
+        ? "flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#B83B2A] text-white shadow-sm"
+        : "flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#FAF6EE] text-[#2C2C2C] hover:bg-[#EFE7D6] border border-[#E5DCC8]";
+
+      tabQuiz.className = !isTimeline
+        ? "flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#B83B2A] text-white shadow-sm"
+        : "flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition-colors bg-[#FAF6EE] text-[#2C2C2C] hover:bg-[#EFE7D6] border border-[#E5DCC8]";
+    }
+
+    // 4. 이벤트 리스너 등록
+    function bindEvents() {
+      document.getElementById("tabTimeline").addEventListener("click", () => switchTab("timeline"));
+      document.getElementById("tabQuiz").addEventListener("click", () => switchTab("quiz"));
+
+      document.getElementById("eraFilterBar").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-era]");
+        if (!btn) return;
+        state.selectedEra = btn.dataset.era;
+        renderEraFilters();
+        renderTimeline();
+      });
+
+      document.getElementById("timelineContainer").addEventListener("click", (e) => {
+        const cardBtn = e.target.closest("button[data-open-id]");
+        if (!cardBtn) return;
+        openModal(cardBtn.dataset.openId);
+      });
+
+      document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+      document.getElementById("detailModal").addEventListener("click", (e) => {
+        if (e.target.id === "detailModal") closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && state.activeModalId) closeModal();
+      });
+
+      // 모달 내 용어 툴팁 클릭
+      document.getElementById("detailModal").addEventListener("click", (e) => {
+        const termBtn = e.target.closest("button[data-vocab-word]");
+        if (!termBtn || !state.activeModalId) return;
+        const item = HERITAGE_DATA.find(d => d.id === state.activeModalId);
+        const word = termBtn.dataset.vocabWord;
+        if (item && item.vocab && item.vocab[word]) {
+          document.getElementById("vocabWord").textContent = word;
+          document.getElementById("vocabMeaning").textContent = item.vocab[word];
+          document.getElementById("vocabBox").classList.remove("hidden");
+        }
+      });
+
+      // 탐험 완료 스탬프 토글
+      document.getElementById("toggleStampBtn").addEventListener("click", () => {
+        if (!state.activeModalId) return;
+        if (state.completedIds.has(state.activeModalId)) {
+          state.completedIds.delete(state.activeModalId);
+          showToast("탐험 완료 도장을 취소했어요.");
+        } else {
+          state.completedIds.add(state.activeModalId);
+          showToast("🎉 탐험 완료 도장을 획득했어요!");
+        }
+        saveProgress();
+        updateProgressUI();
+        updateModalStampButton();
+        renderTimeline();
+      });
+
+      // 스탬프 초기화
+      document.getElementById("resetProgressBtn").addEventListener("click", () => {
+        state.completedIds.clear();
+        saveProgress();
+        updateProgressUI();
+        renderTimeline();
+        showToast("탐험 스탬프를 모두 초기화했어요.");
+      });
+
+      // 퀴즈 보기 클릭
+      document.getElementById("quizContainer").addEventListener("click", (e) => {
+        const optBtn = e.target.closest("button[data-quiz-id]");
+        if (!optBtn) return;
+        const qId = optBtn.dataset.quizId;
+        const oIdx = Number(optBtn.dataset.optionIdx);
+        state.quizAnswers[qId] = oIdx;
+        renderQuiz();
+      });
+
+      document.getElementById("restartQuizBtn").addEventListener("click", () => {
+        state.quizAnswers = {};
+        renderQuiz();
+        showToast("퀴즈를 처음부터 다시 시작해요!");
+      });
+
+      document.getElementById("goToTimelineFromQuiz").addEventListener("click", () => {
+        switchTab("timeline");
+      });
+    }
+
+    // 초기화
+    function init() {
+      loadSavedProgress();
+      renderEraFilters();
+      renderTimeline();
+      renderQuiz();
+      updateProgressUI();
+      bindEvents();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
